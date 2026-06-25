@@ -1,0 +1,6 @@
+# Redrob AI Candidate Ranking Engine — Backend API Dependencies
+# Python 3.11+
+
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
