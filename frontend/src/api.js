@@ -1,7 +1,7 @@
 // frontend/src/api.js
 // Thin wrapper around the FastAPI backend
 
-const BASE = '/api'
+const BASE = 'https://redrob-api.onrender.com/api'
 
 async function req(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
