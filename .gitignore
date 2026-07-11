@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.env
+
+# Project specific data and artifacts (Do not upload to GitHub)
+candidates.jsonl
+sample_candidates.json
+job_description.docx
+redrob_signals_doc.docx
+submission_spec.docx
+README.docx
+precomputed/
+submission.csv
+*.db
+*.pkl
+*.npy
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
