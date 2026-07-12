@@ -1,80 +1,85 @@
 // frontend/src/api.js
-// Thin wrapper around the FastAPI backend
-// Set VITE_API_BASE_URL in a .env file to override (e.g. for local dev).
-const BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/api'
-const HEALTH_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/health'
+
+// Backend URL
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
+  "https://redrob-project-1.onrender.com";
+
+const BASE = `${API_BASE}/api`;
+const HEALTH_URL = `${API_BASE}/health`;
 
 async function req(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
     ...options,
-  })
+  });
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: res.statusText }))
-    throw new Error(err.detail || res.statusText)
+    let err = {};
+    try {
+      err = await res.json();
+    } catch {
+      err = { detail: res.statusText };
+    }
+    throw new Error(err.detail || res.statusText);
   }
-  return res.json()
+
+  return res.json();
 }
 
-// ── Candidates ──────────────────────────────────────────────
-export function listCandidates(params = {}) {
-  const q = new URLSearchParams()
-  Object.entries(params).forEach(([k, v]) => v !== undefined && v !== '' && q.set(k, v))
-  return req(`/candidates?${q}`)
-}
+// Candidates
+export const listCandidates = (params = {}) => {
+  const q = new URLSearchParams(params).toString();
+  return req(`/candidates${q ? `?${q}` : ""}`);
+};
 
-export function getCandidate(id) {
-  return req(`/candidates/${id}`)
-}
+export const getCandidate = (id) => req(`/candidates/${id}`);
 
-export function getCandidateFeatures(id) {
-  return req(`/candidates/${id}/features`)
-}
+export const getCandidateFeatures = (id) =>
+  req(`/candidates/${id}/features`);
 
-// ── Jobs ────────────────────────────────────────────────────
-export function listJobs() {
-  return req('/jobs')
-}
+// Jobs
+export const listJobs = () => req("/jobs");
 
-export function getJob(id) {
-  return req(`/jobs/${id}`)
-}
+export const getJob = (id) => req(`/jobs/${id}`);
 
-export function createJob(body) {
-  return req('/jobs', { method: 'POST', body: JSON.stringify(body) })
-}
+export const createJob = (body) =>
+  req("/jobs", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 
-// ── Rankings ────────────────────────────────────────────────
-export function getRankings(jobId, params = {}) {
-  const q = new URLSearchParams()
-  Object.entries(params).forEach(([k, v]) => v !== undefined && v !== '' && q.set(k, v))
-  return req(`/jobs/${jobId}/rankings?${q}`)
-}
+// Rankings
+export const getRankings = (jobId, params = {}) => {
+  const q = new URLSearchParams(params).toString();
+  return req(`/jobs/${jobId}/rankings${q ? `?${q}` : ""}`);
+};
 
-export function getCandidateRanking(jobId, candidateId) {
-  return req(`/jobs/${jobId}/rankings/${candidateId}`)
-}
+export const getCandidateRanking = (jobId, candidateId) =>
+  req(`/jobs/${jobId}/rankings/${candidateId}`);
 
-// ── Pipeline ────────────────────────────────────────────────
-export function triggerPipeline(body) {
-  return req('/pipeline/run', { method: 'POST', body: JSON.stringify(body) })
-}
+// Pipeline
+export const triggerPipeline = (body) =>
+  req("/pipeline/run", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 
-export function listPipelineRuns(jobId) {
-  const q = jobId ? `?job_id=${jobId}` : ''
-  return req(`/pipeline/runs${q}`)
-}
+export const listPipelineRuns = (jobId) =>
+  req(`/pipeline/runs${jobId ? `?job_id=${jobId}` : ""}`);
 
-export function getPipelineRun(runId) {
-  return req(`/pipeline/runs/${runId}`)
-}
+export const getPipelineRun = (runId) =>
+  req(`/pipeline/runs/${runId}`);
 
-// ── Health ──────────────────────────────────────────────────
+// Health
 export async function checkHealth() {
   try {
-    const res = await fetch(HEALTH_URL)
-    return res.ok
+    const res = await fetch(HEALTH_URL);
+    return res.ok;
   } catch {
-    return false
+    return false;
   }
 }
