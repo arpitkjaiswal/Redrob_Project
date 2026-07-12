@@ -1,6 +1,8 @@
 // frontend/src/api.js
 // Thin wrapper around the FastAPI backend
-const BASE = 'https://redrob-project-1.onrender.com/api'
+// Set VITE_API_BASE_URL in a .env file to override (e.g. for local dev).
+const BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/api'
+const HEALTH_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/health'
 
 async function req(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -70,7 +72,7 @@ export function getPipelineRun(runId) {
 // ── Health ──────────────────────────────────────────────────
 export async function checkHealth() {
   try {
-    const res = await fetch('https://redrob-project-1.onrender.com/health')
+    const res = await fetch(HEALTH_URL)
     return res.ok
   } catch {
     return false

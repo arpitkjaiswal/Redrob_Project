@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def _row_to_dict(row: sqlite3.Row) -> dict:
-    return dict(row) if row else {}
+    return dict(row) if row is not None else {}
 
 
 def _rows_to_list(rows) -> List[dict]:
@@ -32,7 +32,8 @@ def get_candidate(conn: sqlite3.Connection, candidate_id: str) -> Optional[dict]
     cur = conn.execute(
         "SELECT * FROM candidates WHERE candidate_id = ?", (candidate_id,)
     )
-    return _row_to_dict(cur.fetchone()) or None
+    row = cur.fetchone()
+    return dict(row) if row is not None else None
 
 
 def list_candidates(
@@ -190,7 +191,7 @@ def get_ranking_for_candidate(
         "SELECT * FROM rankings WHERE job_id = ? AND candidate_id = ?",
         (job_id, candidate_id),
     ).fetchone()
-    return _row_to_dict(row) or None
+    return dict(row) if row is not None else None
 
 
 def upsert_rankings_batch(
@@ -235,7 +236,7 @@ def get_job(conn: sqlite3.Connection, job_id: str) -> Optional[dict]:
     row = conn.execute(
         "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
     ).fetchone()
-    return _row_to_dict(row) or None
+    return dict(row) if row is not None else None
 
 
 def list_jobs(conn: sqlite3.Connection) -> List[dict]:
@@ -296,7 +297,7 @@ def get_pipeline_run(conn: sqlite3.Connection, run_id: str) -> Optional[dict]:
     row = conn.execute(
         "SELECT * FROM pipeline_runs WHERE run_id = ?", (run_id,)
     ).fetchone()
-    return _row_to_dict(row) or None
+    return dict(row) if row is not None else None
 
 
 def list_pipeline_runs(conn: sqlite3.Connection, job_id: Optional[str] = None) -> List[dict]:

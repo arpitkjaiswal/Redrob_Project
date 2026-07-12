@@ -122,12 +122,12 @@ export default function CandidateDetail() {
               ['behavioral_signals', ranking.behavioral_score],
               ['education_location', ranking.education_score],
               ['semantic_similarity', ranking.embedding_sim],
-            ].map(([key, val]) => val != null && (
+            ].map(([key, val]) => val != null ? (
               <div key={key} className="score-row">
                 <span className="score-row-label">{componentLabels[key] || key}</span>
                 <ScoreBar value={val} />
               </div>
-            ))}
+            ) : null)}
           </div>
           {ranking.reasoning && (
             <div style={{ marginTop: 16 }}>
@@ -274,14 +274,14 @@ export default function CandidateDetail() {
                     <div key={section}>
                       <div className="section-title">{section}</div>
                       <div className="meta-list">
-                        {keys.map(k => features[k] !== undefined && (
+                        {keys.map(k => features[k] !== undefined ? (
                           <div key={k} className="meta-row">
                             <span className="meta-key" style={{ fontFamily: 'monospace', fontSize: 12 }}>{k}</span>
                             <span className="meta-val" style={{ fontSize: 12.5, fontFamily: 'monospace' }}>
                               {typeof features[k] === 'object' ? JSON.stringify(features[k]).slice(0, 80) : String(features[k])}
                             </span>
                           </div>
-                        ))}
+                        ) : null)}
                       </div>
                     </div>
                   ))}

@@ -28,6 +28,7 @@ import os
 import sys
 import threading
 import uuid
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import List, Optional
 
@@ -69,6 +70,18 @@ logger = logging.getLogger(__name__)
 
 
 # ─── App ──────────────────────────────────────────────────────────────────────
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize the SQLite database on startup."""
+    try:
+        init_db()
+        logger.info("Database initialized successfully.")
+    except Exception as exc:
+        logger.warning(f"DB init warning (may already exist): {exc}")
+    yield
+
+
 app = FastAPI(
     title="Redrob AI Candidate Ranking Engine",
     description=(
@@ -79,6 +92,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -88,16 +102,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-def on_startup():
-    """Initialize the SQLite database on first launch."""
-    try:
-        init_db()
-        logger.info("Database initialized successfully.")
-    except Exception as exc:
-        logger.warning(f"DB init warning (may already exist): {exc}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
