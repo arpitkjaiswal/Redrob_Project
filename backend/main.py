@@ -357,11 +357,17 @@ def trigger_pipeline(body: PipelineRunRequest, conn: sqlite3.Connection = Depend
 
     # Launch pipeline in background thread so the API responds immediately
     def _run():
+        from backend.database import get_candidates_path
         from backend.pipeline import run_full_pipeline
+        # The frontend's default path is local-development friendly. In
+        # deployment, resolve it to the persistent dataset location instead.
+        candidates_path = body.candidates_path
+        if candidates_path == "./candidates.jsonl":
+            candidates_path = str(get_candidates_path())
         run_full_pipeline(
             run_id=run_id,
             job_id=body.job_id,
-            candidates_path=body.candidates_path,
+            candidates_path=candidates_path,
             top_k=body.top_k,
             embedding_mode=body.embedding_mode,
         )

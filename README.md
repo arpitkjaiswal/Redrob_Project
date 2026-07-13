@@ -113,6 +113,23 @@ python3 -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
 Open **http://localhost:8000/docs** for the interactive Swagger UI where you can test all endpoints directly in the browser.
 
+### Render deployment with the full dataset
+
+Do not commit the 487 MB `candidates.jsonl` file. Upload it to object storage,
+then attach a Render persistent disk at `/var/data` and configure these Render
+environment variables:
+
+```bash
+DATA_DIR=/var/data
+CANDIDATES_URL=https://<private-object-storage-url>/candidates.jsonl
+```
+
+On the first start the API downloads the dataset, seeds
+`/var/data/redrob_candidates.db`, and keeps both files on the disk. Subsequent
+deploys reuse them. Keep `CANDIDATES_URL` secret if it contains a signed URL.
+The default `./candidates.jsonl` value in the Pipeline page resolves to this
+persistent dataset in deployment.
+
 ### API Endpoints
 
 #### Health

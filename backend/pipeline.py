@@ -26,7 +26,9 @@ ROOT_DIR = Path(__file__).parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-PRECOMPUTED_DIR = ROOT_DIR / "precomputed"
+from backend.database import get_data_dir, get_db_path
+
+PRECOMPUTED_DIR = get_data_dir()
 
 
 def _populate_candidates_to_db(conn, candidates_path: str) -> int:
@@ -181,7 +183,7 @@ def run_full_pipeline(
         update_job_status,
     )
 
-    db = db_path or (ROOT_DIR / "precomputed" / "redrob_candidates.db")
+    db = db_path or get_db_path()
     conn = get_connection(db)
 
     start = time.time()

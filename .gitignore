@@ -24,6 +24,7 @@ wheels/
 # Virtual environments
 venv/
 .env
+frontend/.env
 
 # Project specific data and artifacts (Do not upload to GitHub)
 candidates.jsonl
